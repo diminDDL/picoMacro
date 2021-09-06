@@ -205,6 +205,12 @@ configLabel = tk.Label(frameForButConf, text="Button X Selected:")
 configLabel.config(font=(("", 12)))
 configLabel.grid(row=0, column=0, padx=20, pady=10, sticky="n")
 
+shortcutLabel = tk.Label(frameForButConf, text="Shortcut:")
+shortcutLabel.config(font=(("", 12)))
+shortcutLabel.grid(row=1, column=0, padx=20, pady=10, sticky="w")
+
+
+
 window.mainloop()
 print("test")
 
