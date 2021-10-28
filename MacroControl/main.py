@@ -29,7 +29,7 @@ from PIL import Image, ImageTk
 
 # window properties
 window = tk.Tk()
-window.geometry("800x600")
+window.geometry("1200x800")
 window.title("Pico Macro Control")
 window.grid_rowconfigure(0, weight=0)
 window.grid_rowconfigure(1, weight=0)
@@ -42,7 +42,7 @@ window.grid_columnconfigure(3, weight=0)
 
 # frame for objects related to the image
 frameRightOfImage = tk.Frame(window, bg="purple")
-frameRightOfImage.grid(row=0, column=1, rowspan=2, sticky="n")
+frameRightOfImage.grid(row=0, column=1, rowspan=2, sticky="ne")
 
 # thumbnail label
 thumbnailLabel = tk.Label(frameRightOfImage, text="Thumbnail:")
@@ -73,13 +73,13 @@ image.grid(row=1, column=0, columnspan=3, rowspan=1, sticky="n", padx=20)
 
 # frame for objects left of the image
 frameLeftOfImage = tk.Frame(window, bg="white")
-frameLeftOfImage.grid(row=0, column=0, rowspan=2, sticky="n")
+frameLeftOfImage.grid(row=0, column=0, rowspan=2, columnspan=2, sticky="nw")
 
 
 # profile label
 profileLabel = tk.Label(frameLeftOfImage, text="Profile:")
 profileLabel.config(font=(("", 12)))
-profileLabel.grid(row=0, column=0, padx=10, pady=10)
+profileLabel.grid(row=0, column=0, padx=10, pady=10, sticky="n")
 # dropdown profile selector
 
 dropdownVar = StringVar(window)
@@ -102,7 +102,7 @@ profileNameEditorLabel.grid(row=1, column=0, padx=10, pady=10, sticky="n")
 
 profileName = ""
 profileLabelEditor = tk.Entry(frameLeftOfImage, textvariable=profileName)
-profileLabelEditor.config(font=(("", 12)))
+profileLabelEditor.config(font=(("", 12)), width=18)
 profileLabelEditor.grid(row=1, column=1, padx=10, pady=10, sticky="n")
 
 # profile shortcut label
@@ -113,7 +113,7 @@ profileShortcutEditorLabel.grid(row=2, column=0, columnspan=1, padx=10, pady=10,
 
 # profile shortcut editor
 profileShortcutEditorButton = tk.Button(frameLeftOfImage, text="New")
-profileShortcutEditorButton.config(font=(("", 12)))
+profileShortcutEditorButton.config(font=(("", 12)), width=10)
 profileShortcutEditorButton.grid(row=2, column=1, padx=10, pady=10, sticky="n")
 
 
@@ -122,7 +122,7 @@ profileShortcutEditorButton.grid(row=2, column=1, padx=10, pady=10, sticky="n")
 
 # frame for the button blocks
 frameForButtons = tk.Frame(window, bg="blue")
-frameForButtons.grid(row=2, column=0, rowspan=2, sticky="nw")
+frameForButtons.grid(row=2, column=0, rowspan=3, sticky="nw", columnspan=1)
 
 # TODO
 # add colors to buttons
@@ -198,16 +198,31 @@ buttonGrid16.grid(row=3, column=3, padx=5, pady=5, sticky="nw")
 
 # frame for the button customization block
 frameForButConf = tk.Frame(window, bg="orange")
-frameForButConf.grid(row=2, column=1, rowspan=2, sticky="ne")
+frameForButConf.grid(row=2, column=1, rowspan=2, sticky="nw")
 
 # label
 configLabel = tk.Label(frameForButConf, text="Button X Selected:")
 configLabel.config(font=(("", 12)))
-configLabel.grid(row=0, column=0, padx=20, pady=10, sticky="n")
+configLabel.grid(row=0, column=0, padx=20, pady=10, sticky="n", columnspan=2)
 
 shortcutLabel = tk.Label(frameForButConf, text="Shortcut:")
 shortcutLabel.config(font=(("", 12)))
 shortcutLabel.grid(row=1, column=0, padx=20, pady=10, sticky="w")
+
+# text field for shortcut
+shortcutVar = ""
+shortcutVarDisplay = tk.Entry(frameForButConf, textvariable=shortcutVar)
+shortcutVarDisplay.config(font=(("", 12)))
+shortcutVarDisplay.grid(row=1, column=1, padx=10, pady=10, sticky="w")
+# TODO
+# figure out how to compress elements closer together ignoring the grid
+
+# new shortcut button
+newShortcutBtn = tk.Button(frameForButConf, text="New")
+newShortcutBtn.config(font=(("", 12)))
+newShortcutBtn.grid(row=1, column=2, padx=5, pady=5, sticky="w")
+
+# color label
 
 
 
