@@ -2,7 +2,6 @@
 #include "pico/stdlib.h"
 
 int main() {
-
     const uint led_pin = 25;
 
     // Initialize LED pin
