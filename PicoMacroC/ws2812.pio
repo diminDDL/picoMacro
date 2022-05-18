@@ -1,0 +1,43 @@
+.program WS_LED
+
+; Allow the control of WS2812 LEDs using PIO for more efficiency
+
+.side_set 1
+
+.wrap_target
+bitLoop:
+    out x, 1        side 0 [2] ; Wait for incoming data from the FIFO
+    jmp !x sendZero     side 1 [1] ; Branch on the bit we shifted out. Positive pulse
+sendOne:
+    jmp  bitLoop    side 1 [4] ; Continue driving high, when we need a long pulse
+sendZero:
+    nop             side 0 [4] ; short pulse
+.wrap
+
+% c-sdk {
+
+// Helper function (for use in C program) to initialize this PIO program
+static inline void ws_program_init(PIO pio, uint sm, uint offset, uint pin, float freq, bool rgbw) {
+
+    // Sets up state machine and wrap target. This function is automatically
+    // generated in ws.pio.h.
+    pio_sm_config c = WS_LED_program_get_default_config(offset);
+    // Allow PIO to control GPIO
+    pio_gpio_init(pio, pin);
+    // Set GPIO pin as Output
+    pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
+    // set sideset pin
+    sm_config_set_sideset_pins(&c, pin);
+    // set the input FIFO shift out size depending if the LED includes white LED
+    sm_config_set_out_shift(&c, false, true, rgbw ? 32 : 24);
+    // since we don't return any value back to the CPU we can set he FIFO to be just input
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
+    // set the cock frequency
+    float div = clock_get_hz(clk_sys) / (freq * 10);
+    sm_config_set_clkdiv(&c, div);
+    // start the PIO instance
+    pio_sm_init(pio, sm, offset, &c);
+    pio_sm_set_enabled(pio, sm, true);
+}
+
+%}

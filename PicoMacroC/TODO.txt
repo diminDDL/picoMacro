@@ -1,0 +1,6 @@
+1. Get the ws2812 LEDs working
+2. Get the keyboard matrix scan working
+3. Get the display working
+4. Add USB/Serial communication method
+5. Add USB/Serial command to reboot in to bootrom mode
+6. Create a data storage method

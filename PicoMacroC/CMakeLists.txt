@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.12)
 
 # Include build functions from Pico SDK
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
+include($ENV{PICO_SDK_PATH}/tools/CMakeLists.txt)
 
 # Set name of project (as PROJECT_NAME) and C/C   standards
 project(PicoMacro C CXX ASM)
@@ -17,12 +18,18 @@ add_executable(${PROJECT_NAME}
     main.c
 )
 
+# Create C header file with the name <pio program>.pio.h
+pico_generate_pio_header(${PROJECT_NAME}  
+        ${CMAKE_CURRENT_LIST_DIR}/ws2812.pio
+)
+
 # Create map/bin/hex/uf2 files
 pico_add_extra_outputs(${PROJECT_NAME})
 
 # Link to pico_stdlib (gpio, time, etc. functions)
 target_link_libraries(${PROJECT_NAME} 
     pico_stdlib
+    hardware_pio
 )
 
 # Enable usb output, disable uart output

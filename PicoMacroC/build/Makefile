@@ -130,6 +130,32 @@ PicoMacro/fast:
 .PHONY : PicoMacro/fast
 
 #=============================================================================
+# Target rules for targets named PioasmBuild
+
+# Build rule for target.
+PioasmBuild: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 PioasmBuild
+.PHONY : PioasmBuild
+
+# fast build rule for target.
+PioasmBuild/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/PioasmBuild.dir/build.make CMakeFiles/PioasmBuild.dir/build
+.PHONY : PioasmBuild/fast
+
+#=============================================================================
+# Target rules for targets named PicoMacro_ws2812_pio_h
+
+# Build rule for target.
+PicoMacro_ws2812_pio_h: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 PicoMacro_ws2812_pio_h
+.PHONY : PicoMacro_ws2812_pio_h
+
+# fast build rule for target.
+PicoMacro_ws2812_pio_h/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/PicoMacro_ws2812_pio_h.dir/build.make CMakeFiles/PicoMacro_ws2812_pio_h.dir/build
+.PHONY : PicoMacro_ws2812_pio_h/fast
+
+#=============================================================================
 # Target rules for targets named ELF2UF2Build
 
 # Build rule for target.
@@ -965,6 +991,30 @@ home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_irq/irq_handler_chain.S.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/PicoMacro.dir/build.make CMakeFiles/PicoMacro.dir/home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_irq/irq_handler_chain.S.obj
 .PHONY : home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_irq/irq_handler_chain.S.obj
 
+home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.obj: home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.c.obj
+.PHONY : home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.obj
+
+# target to build an object file
+home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/PicoMacro.dir/build.make CMakeFiles/PicoMacro.dir/home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.c.obj
+.PHONY : home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.c.obj
+
+home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.i: home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.c.i
+.PHONY : home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.i
+
+# target to preprocess a source file
+home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/PicoMacro.dir/build.make CMakeFiles/PicoMacro.dir/home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.c.i
+.PHONY : home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.c.i
+
+home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.s: home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.c.s
+.PHONY : home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.s
+
+# target to generate assembly for a file
+home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/PicoMacro.dir/build.make CMakeFiles/PicoMacro.dir/home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.c.s
+.PHONY : home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.c.s
+
 home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pll/pll.obj: home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pll/pll.c.obj
 .PHONY : home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pll/pll.obj
 
@@ -1670,6 +1720,8 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... ELF2UF2Build"
+	@echo "... PicoMacro_ws2812_pio_h"
+	@echo "... PioasmBuild"
 	@echo "... bs2_default_bin"
 	@echo "... bs2_default_padded_checksummed_asm"
 	@echo "... PicoMacro"
@@ -1772,6 +1824,9 @@ help:
 	@echo "... home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_irq/irq.i"
 	@echo "... home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_irq/irq.s"
 	@echo "... home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_irq/irq_handler_chain.obj"
+	@echo "... home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.obj"
+	@echo "... home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.i"
+	@echo "... home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pio/pio.s"
 	@echo "... home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pll/pll.obj"
 	@echo "... home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pll/pll.i"
 	@echo "... home/dmytro/pico/pico/pico-sdk/src/rp2_common/hardware_pll/pll.s"
