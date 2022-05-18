@@ -1,0 +1,2 @@
+cmake ./build
+make ./build

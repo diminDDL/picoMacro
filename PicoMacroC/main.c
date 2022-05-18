@@ -44,6 +44,7 @@ int main() {
             put_pixel(rgb_u32(0, 255, 0));
             put_pixel(rgb_u32(0, 0, 255));
         }
+        put_pixel(rgb_u32(255, 0, 0));
         sleep_ms(100);
         // reset_usb_boot(0,0); // allows us to reboot the pico in to the bootloader mode
     }
