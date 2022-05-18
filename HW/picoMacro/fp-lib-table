@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name picoMacro)(type KiCad)(uri /home/dima/Documents/kicad/picoMacro/picoMacro)(options "")(descr ""))
+  (lib (name KiCadLibraries)(type KiCad)(uri /home/dima/Documents/kicad/RP_Silicon_KiCad-main/KiCadLibraries)(options "")(descr ""))
+)
