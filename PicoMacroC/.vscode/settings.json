@@ -2,6 +2,11 @@
     "files.associations": {
         "ws2812.pio.h": "c",
         "cstdio": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "pio.h": "c",
+        "usb_hid.h": "c",
+        "config.h": "c",
+        "clocks.h": "c",
+        "bootrom.h": "c"
     }
 }

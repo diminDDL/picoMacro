@@ -25,14 +25,18 @@ target_sources(${PROJECT_NAME} PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/main.c
         ${CMAKE_CURRENT_LIST_DIR}/lib/wsLED.h
         ${CMAKE_CURRENT_LIST_DIR}/lib/wsLED.c
+        ${CMAKE_CURRENT_LIST_DIR}/lib/usb_descriptors.h
+        ${CMAKE_CURRENT_LIST_DIR}/lib/usb_descriptors.c
+        ${CMAKE_CURRENT_LIST_DIR}/lib/usb_hid.h
+        ${CMAKE_CURRENT_LIST_DIR}/lib/usb_hid.c
         )
 
-# target_include_directories(
-#         ${PROJECT_NAME} PUBLIC
-#         ${CMAKE_CURRENT_LIST_DIR}
-#         ${CMAKE_CURRENT_LIST_DIR}/inc
-#         ${CMAKE_CURRENT_LIST_DIR}/lib
-#         )
+target_include_directories(
+        ${PROJECT_NAME} PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}
+        ${CMAKE_CURRENT_LIST_DIR}/inc
+        ${CMAKE_CURRENT_LIST_DIR}/lib
+        )
 
 # Create C header file with the name <pio program>.pio.h
 pico_generate_pio_header(${PROJECT_NAME}  
@@ -46,6 +50,9 @@ pico_add_extra_outputs(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} 
     pico_stdlib
     hardware_pio
+    pico_stdlib
+    tinyusb_device
+    tinyusb_board
 )
 
 # Enable usb output, disable uart output
