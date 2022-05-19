@@ -13,10 +13,26 @@ set(CMAKE_CXX_STANDARD 17)
 # Creates a pico-sdk subdirectory in our project for the libraries
 pico_sdk_init()
 
+include_directories(${CMAKE_SOURCE_DIR}/inc)
+link_directories(${CMAKE_SOURCE_DIR}/lib)
+
 # Tell CMake where to find the executable source file
 add_executable(${PROJECT_NAME} 
     main.c
 )
+
+target_sources(${PROJECT_NAME} PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}/main.c
+        ${CMAKE_CURRENT_LIST_DIR}/lib/wsLED.h
+        ${CMAKE_CURRENT_LIST_DIR}/lib/wsLED.c
+        )
+
+# target_include_directories(
+#         ${PROJECT_NAME} PUBLIC
+#         ${CMAKE_CURRENT_LIST_DIR}
+#         ${CMAKE_CURRENT_LIST_DIR}/inc
+#         ${CMAKE_CURRENT_LIST_DIR}/lib
+#         )
 
 # Create C header file with the name <pio program>.pio.h
 pico_generate_pio_header(${PROJECT_NAME}  

@@ -3,15 +3,10 @@
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
 #include "ws2812.pio.h"
-#include "config.h"
+#include "lib/config.h"
+#include "lib/wsLED.h"
 
-static inline void put_pixel(uint32_t pixel_grb) {
-    pio_sm_put_blocking(pio0, 0, pixel_grb << 8u);
-}
 
-static inline uint32_t rgb_u32(uint8_t r, uint8_t g, uint8_t b) {
-    return ((uint32_t) (r) << 8) | ((uint32_t) (g) << 16) | (uint32_t) (b);
-}
 
 
 
@@ -40,11 +35,11 @@ int main() {
     int t = 0;
     while (true) {
         for(int8_t i = 0; i < NUM_OF_LEDS/3; i++) {
-            put_pixel(rgb_u32(255, 0, 0));
-            put_pixel(rgb_u32(0, 255, 0));
-            put_pixel(rgb_u32(0, 0, 255));
+            put_pixel(rgb_u32(255, 0, 0), pio, sm);
+            put_pixel(rgb_u32(0, 255, 0), pio, sm);
+            put_pixel(rgb_u32(0, 0, 255), pio, sm);
         }
-        put_pixel(rgb_u32(255, 0, 0));
+        put_pixel(rgb_u32(255, 0, 0), pio, sm);
         sleep_ms(100);
         // reset_usb_boot(0,0); // allows us to reboot the pico in to the bootloader mode
     }
