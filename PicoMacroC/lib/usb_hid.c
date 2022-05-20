@@ -101,7 +101,7 @@ static void send_hid_report(uint8_t report_id, uint32_t btn)
       }
     }
     break;
-
+    
     case REPORT_ID_MOUSE:
     {
       int8_t const delta = 5;
@@ -181,11 +181,12 @@ void hid_task(bool wakeup)
     // Wake up host if we are in suspend mode
     // and REMOTE_WAKEUP feature is enabled by host
     tud_remote_wakeup();
-  }else
-  {
-    // Send the 1st of report chain, the rest will be sent by tud_hid_report_complete_cb()
-    send_hid_report(REPORT_ID_KEYBOARD, wakeup);
   }
+  // else
+  // {
+  //   // Send the 1st of report chain, the rest will be sent by tud_hid_report_complete_cb()
+  //   send_hid_report(REPORT_ID_KEYBOARD, wakeup);
+  // }
 }
 
 // Invoked when sent REPORT successfully to host

@@ -10,7 +10,6 @@
 int main() {
     stdio_init_all();
     hidInit();
-
     static const uint led_pin = 25;
     static const float pio_freq = 2000;
 
@@ -49,7 +48,8 @@ int main() {
             put_pixel(rgb_u32(0, 0, 0), pio, sm);
         sleep_ms(10);
 
-        hidRun(gpio_get(KEYBOARD_PIN_X_BEGIN));
+        hidRun(false);
+
         // reset_usb_boot(0,0); // allows us to reboot the pico in to the bootloader mode
     }
 }

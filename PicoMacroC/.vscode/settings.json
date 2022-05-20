@@ -7,6 +7,10 @@
         "usb_hid.h": "c",
         "config.h": "c",
         "clocks.h": "c",
-        "bootrom.h": "c"
-    }
+        "bootrom.h": "c",
+        "usb_descriptors.h": "c"
+    },
+    "cSpell.words": [
+        "GAMEPAD"
+    ]
 }

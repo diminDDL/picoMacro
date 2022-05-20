@@ -9,6 +9,31 @@
 #include "tusb.h"
 #include "usb_descriptors.h"
 
+// HID button struct
+enum{
+    SHORTCUT = 0,   // uses a shortcutBase array and sends very specific keys in a very specific manner as described in the array
+    TEXT,           // just matches a char array with a key and sends that (when using different languages this will be funky but there is no way to fix it in the USB standard, so I an sorry)
+    MEDIA,          // media keys aka volume UP DOWN, PAUSE and so on only one key per physical key because if you want to mix it with other stuff you are deranged
+    GAMEPAD         // same as shortcut, just uses gamepad keys
+};
+struct shortcutBase // structure: {HID_key, pressTime(mS), releaseTime(mS), timeMultiplier}
+{
+    u_int8_t HIDkey;        // the HID keycode
+    u_int8_t pressTime;     // the time the key should be pressed down (ms)
+    u_int8_t releaseTime;   // the time the key should be released (ms)
+    u_int8_t multiplier;    // the multiplier for the time (1 = normal, 2 = double, 3 = triple, 4 = quadruple, etc)
+} sB;
+struct key
+{
+    u_int8_t keyNum;        // the key number on the macropad
+    u_int8_t keyXval;       // the x value of the key on the macropad
+    u_int8_t keyYval;       // the y value of the key on the macropad
+    u_int8_t HIDtype;       // the type of HID keycode to send
+    u_int8_t delayMs;       // the delay between the key press and release (ms) except when using the SHORTCUT type
+};
+
+
+
 // different tasks
 void hidInit(void);
 void hidRun(bool wakeup);
