@@ -1,5 +1,5 @@
 1. Get the ws2812 LEDs working ✅
-7. Get HID working
+7. Get HID working ✅
 2. Get the keyboard matrix scan working
 3. Get the display working
 4. Add USB/Serial communication method

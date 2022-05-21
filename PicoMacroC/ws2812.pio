@@ -17,7 +17,7 @@ sendZero:
 % c-sdk {
 
 // Helper function (for use in C program) to initialize this PIO program
-static inline void ws_program_init(PIO pio, uint sm, uint offset, uint pin, float freq, bool rgbw) {
+static inline void ws_program_init(PIO pio, uint sm, uint offset, uint pin, float freq, bool rgbw, int systemClock) {
 
     // Sets up state machine and wrap target. This function is automatically
     // generated in ws.pio.h.
@@ -33,7 +33,7 @@ static inline void ws_program_init(PIO pio, uint sm, uint offset, uint pin, floa
     // since we don't return any value back to the CPU we can set he FIFO to be just input
     sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
     // set the cock frequency
-    float div = clock_get_hz(clk_sys) / (freq * 10);
+    float div = systemClock / (freq * 10);
     sm_config_set_clkdiv(&c, div);
     // start the PIO instance
     pio_sm_init(pio, sm, offset, &c);
