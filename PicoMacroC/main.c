@@ -34,9 +34,10 @@ int main() {
             put_pixel(rgb_u32(0, 0, 0), pio, sm);
             put_pixel(rgb_u32(0, 0, 0), pio, sm);
         }
+        hidRun(gpio_get(KEYBOARD_PIN_X_BEGIN));
         sleep_ms(10);
-
-        hidRun(false);
+        printf("this is a test\n");
+        
 
         // reset_usb_boot(0,0); // allows us to reboot the pico in to the bootloader mode
     }
