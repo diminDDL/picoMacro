@@ -29,6 +29,7 @@ target_sources(${PROJECT_NAME} PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/lib/usb_descriptors.c
         ${CMAKE_CURRENT_LIST_DIR}/lib/usb_hid.h
         ${CMAKE_CURRENT_LIST_DIR}/lib/usb_hid.c
+        ${CMAKE_CURRENT_LIST_DIR}/lib/stdio_usb.c
         )
 
 target_include_directories(
@@ -43,8 +44,6 @@ pico_generate_pio_header(${PROJECT_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/ws2812.pio
 )
 
-# Create map/bin/hex/uf2 files
-pico_add_extra_outputs(${PROJECT_NAME})
 
 # Link to pico_stdlib (gpio, time, etc. functions)
 target_link_libraries(${PROJECT_NAME} 
@@ -54,6 +53,9 @@ target_link_libraries(${PROJECT_NAME}
     tinyusb_device
     tinyusb_board
 )
+
+# Create map/bin/hex/uf2 files
+pico_add_extra_outputs(${PROJECT_NAME})
 
 # Enable usb output, disable uart output
 pico_enable_stdio_usb(${PROJECT_NAME} 1)
