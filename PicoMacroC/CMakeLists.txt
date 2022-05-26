@@ -30,6 +30,8 @@ target_sources(${PROJECT_NAME} PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/lib/usb_hid.h
         ${CMAKE_CURRENT_LIST_DIR}/lib/usb_hid.c
         ${CMAKE_CURRENT_LIST_DIR}/lib/stdio_usb.c
+        ${CMAKE_CURRENT_LIST_DIR}/lib/kbScan.h
+        ${CMAKE_CURRENT_LIST_DIR}/lib/kbScan.c
         )
 
 target_include_directories(
@@ -43,7 +45,6 @@ target_include_directories(
 pico_generate_pio_header(${PROJECT_NAME}  
         ${CMAKE_CURRENT_LIST_DIR}/ws2812.pio
 )
-
 
 # Link to pico_stdlib (gpio, time, etc. functions)
 target_link_libraries(${PROJECT_NAME} 

@@ -8,7 +8,8 @@
         "config.h": "c",
         "clocks.h": "c",
         "bootrom.h": "c",
-        "usb_descriptors.h": "c"
+        "usb_descriptors.h": "c",
+        "wsled.h": "c"
     },
     "cSpell.words": [
         "GAMEPAD"
