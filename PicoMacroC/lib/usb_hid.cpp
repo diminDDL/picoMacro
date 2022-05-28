@@ -36,7 +36,7 @@ void hidInit(void){
 
 void hidRun(bool wakeup){
     tud_task();
-    hid_task(wakeup);
+    //hid_task(wakeup);
 }
 
 //--------------------------------------------------------------------+

@@ -17,21 +17,19 @@ include_directories(${CMAKE_SOURCE_DIR}/inc)
 link_directories(${CMAKE_SOURCE_DIR}/lib)
 
 # Tell CMake where to find the executable source file
-add_executable(${PROJECT_NAME} 
-    main.c
-)
+add_executable(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/main.cpp)
 
 target_sources(${PROJECT_NAME} PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/main.c
+        ${CMAKE_CURRENT_LIST_DIR}/main.cpp
         ${CMAKE_CURRENT_LIST_DIR}/lib/wsLED.h
-        ${CMAKE_CURRENT_LIST_DIR}/lib/wsLED.c
+        ${CMAKE_CURRENT_LIST_DIR}/lib/wsLED.cpp
         ${CMAKE_CURRENT_LIST_DIR}/lib/usb_descriptors.h
         ${CMAKE_CURRENT_LIST_DIR}/lib/usb_descriptors.c
         ${CMAKE_CURRENT_LIST_DIR}/lib/usb_hid.h
-        ${CMAKE_CURRENT_LIST_DIR}/lib/usb_hid.c
+        ${CMAKE_CURRENT_LIST_DIR}/lib/usb_hid.cpp
         ${CMAKE_CURRENT_LIST_DIR}/lib/stdio_usb.c
         ${CMAKE_CURRENT_LIST_DIR}/lib/kbScan.h
-        ${CMAKE_CURRENT_LIST_DIR}/lib/kbScan.c
+        ${CMAKE_CURRENT_LIST_DIR}/lib/kbScan.cpp
         )
 
 target_include_directories(

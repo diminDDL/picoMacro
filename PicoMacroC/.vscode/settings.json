@@ -12,6 +12,13 @@
         "wsled.h": "c"
     },
     "cSpell.words": [
-        "GAMEPAD"
+        "bootloader",
+        "GAMEPAD",
+        "gpio",
+        "GPIO",
+        "pico",
+        "PICO",
+        "sendkey",
+        "thiss"
     ]
 }

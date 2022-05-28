@@ -5,6 +5,7 @@
 
 void initKbScan(uint inStartPin, uint outStartPin, uint inPinCount, uint outPinCount, uint freq);
 uint16_t getKbReport();
+bool isPressedAtPos(uint16_t report, uint8_t pos);
 static uint inStartPinL;
 static uint outStartPinL;
 static uint inPinCountL;

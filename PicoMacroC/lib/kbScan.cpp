@@ -34,3 +34,8 @@ uint16_t getKbReport(){
     }
     return report;
 }
+
+bool isPressedAtPos(uint16_t report, uint8_t pos)
+{
+  return (report & (1 << pos)) != 0;
+}

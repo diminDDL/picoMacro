@@ -22,7 +22,7 @@ struct shortcutBase // structure: {HID_key, pressTime(mS), releaseTime(mS), time
     u_int8_t pressTime;     // the time the key should be pressed down (ms)
     u_int8_t releaseTime;   // the time the key should be released (ms)
     u_int8_t multiplier;    // the multiplier for the time (1 = normal, 2 = double, 3 = triple, 4 = quadruple, etc)
-} sB;
+};
 struct key
 {
     u_int8_t keyNum;        // the key number on the macropad
