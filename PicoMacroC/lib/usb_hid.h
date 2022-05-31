@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <vector>
 
 #include "bsp/board.h"
 #include "tusb.h"
@@ -23,15 +24,42 @@ struct shortcutBase // structure: {HID_key, pressTime(mS), releaseTime(mS), time
     u_int8_t releaseTime;   // the time the key should be released (ms)
     u_int8_t multiplier;    // the multiplier for the time (1 = normal, 2 = double, 3 = triple, 4 = quadruple, etc)
 };
-struct key
-{
-    u_int8_t keyNum;        // the key number on the macropad
-    u_int8_t keyXval;       // the x value of the key on the macropad
-    u_int8_t keyYval;       // the y value of the key on the macropad
-    u_int8_t HIDtype;       // the type of HID keycode to send
-    u_int8_t delayMs;       // the delay between the key press and release (ms) except when using the SHORTCUT type
-};
 
+class Key{
+    public:
+    Key(uint type, u_int8_t keyXvalue, u_int8_t keyYvalue) : HIDtype {type}, keyXval {keyXvalue}, keyYval {keyYvalue}
+    {
+    }
+    uint getType(){
+        return HIDtype;
+    }
+    u_int8_t getKeyNum(){
+        return keyXval;
+    }
+    void setRGB(uint32_t color){
+        RGBcode = color;
+    }
+    void clearShortcuts(){
+        shortcuts.clear();
+    }
+    void addShortcut(shortcutBase s){
+        shortcuts.push_back(s);
+    }
+    uint getShortcutSize(){
+        return shortcuts.size();
+    }
+    shortcutBase getShortcut(uint i){
+        return shortcuts[i];
+    }
+    private:
+    std::vector<shortcutBase> shortcuts;
+    uint HIDtype {};            // the type of HID device
+    uint32_t RGBcode;           // LED color
+    u_int8_t keyNum {};         // the key number on the macropad
+    u_int8_t keyXval {};        // the x value of the key on the macropad
+    u_int8_t keyYval {};        // the y value of the key on the macropad
+    u_int8_t delayMs;           // the delay between the key press and release (ms) except when using the SHORTCUT type
+};
 
 
 // different tasks
