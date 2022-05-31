@@ -11,12 +11,6 @@
 #include "usb_descriptors.h"
 
 // HID button struct
-enum{
-    SHORTCUT = 0,   // uses a shortcutBase array and sends very specific keys in a very specific manner as described in the array
-    TEXT,           // just matches a char array with a key and sends that (when using different languages this will be funky but there is no way to fix it in the USB standard, so I an sorry)
-    MEDIA,          // media keys aka volume UP DOWN, PAUSE and so on only one key per physical key because if you want to mix it with other stuff you are deranged
-    GAMEPAD         // same as shortcut, just uses gamepad keys
-};
 struct shortcutBase // structure: {HID_key, pressTime(mS), releaseTime(mS), timeMultiplier}
 {
     u_int8_t HIDkey;        // the HID keycode
@@ -39,10 +33,10 @@ class Key{
     void setRGB(uint32_t color){
         RGBcode = color;
     }
-    void clearShortcuts(){
+    void clearShortcut(){
         shortcuts.clear();
     }
-    void addShortcut(shortcutBase s){
+    void addKey(shortcutBase s){
         shortcuts.push_back(s);
     }
     uint getShortcutSize(){
@@ -50,6 +44,20 @@ class Key{
     }
     shortcutBase getShortcut(uint i){
         return shortcuts[i];
+    }
+    void sendShortcut(bool btn){
+        static uint8_t report[6] = {0}; // think of how to implement this so that multiple buttons can be pressed at once and it doesn't stall the program
+        // start timestamp
+        // if the button is pressed proceed
+        // use the delta from the current timestamp and the start one to detect how much time has elapsed
+        // iterate over the vector of keys and check the time of start
+        // if something starts add it to the report
+        // if the report is full, release the oldest key TODO tell the user about that
+        // TODO
+        // if it tells to release a key according to the vector, do so.
+        // send the report
+        // stop here when button pressed, else:
+        // after completion send NULL report
     }
     private:
     std::vector<shortcutBase> shortcuts;
