@@ -14,9 +14,8 @@
 struct shortcutBase // structure: {HID_key, pressTime(mS), releaseTime(mS), timeMultiplier}
 {
     u_int8_t HIDkey;        // the HID keycode
-    u_int8_t pressTime;     // the time the key should be pressed down (ms)
-    u_int8_t releaseTime;   // the time the key should be released (ms)
-    u_int8_t multiplier;    // the multiplier for the time (1 = normal, 2 = double, 3 = triple, 4 = quadruple, etc)
+    u_int32_t pressTime;     // the time the key should be pressed down (ms)
+    u_int32_t releaseTime;   // the time the key should be released (ms)
 };
 
 class Key{
@@ -28,7 +27,7 @@ class Key{
         return HIDtype;
     }
     u_int8_t getKeyNum(){
-        return keyXval;
+        return keyXval * keyYval;
     }
     void setRGB(uint32_t color){
         RGBcode = color;
@@ -45,8 +44,72 @@ class Key{
     shortcutBase getShortcut(uint i){
         return shortcuts[i];
     }
+    // call this function in a loop with the status of the button as an argument, it should automatically handle the button press and release
     void sendShortcut(bool btn){
-        static uint8_t report[6] = {0}; // think of how to implement this so that multiple buttons can be pressed at once and it doesn't stall the program
+        static uint8_t reportPos = 0;
+        static uint8_t report[6] = {0};     // think of how to implement this so that multiple buttons can be pressed at once and it doesn't stall the program
+        static uint32_t startTime = 0;      // TODO change to uint64_t
+        static uint8_t releasedCount = 0;
+        static bool has_keyboard_key = false;
+        static bool finished = false;
+        static bool startedReport = false;
+        static uint32_t lastReleaseTime = 0;
+        // start the report
+        if(btn && !startedReport){
+            startedReport = true;
+        }
+        // find the last release time, we can leave once we release the last key
+        if(lastReleaseTime == 0){
+            for(uint i = 0; i < shortcuts.size(); i++){
+                if(shortcuts[i].releaseTime > lastReleaseTime)
+                    lastReleaseTime = shortcuts[i].releaseTime;
+            }
+        }
+        if(HIDtype == REPORT_ID_KEYBOARD && !finished && startedReport){
+            if(startTime == 0)
+                startTime = time_us_64();
+            uint32_t elapsedTime = (time_us_64() - startTime) / 1000;    // TODO change to uint64_t
+            for(uint i = 0; i < shortcuts.size(); i++){
+                if(elapsedTime >= shortcuts[i].pressTime && elapsedTime <= shortcuts[i].releaseTime){
+                    report[reportPos] = shortcuts[i].HIDkey;    // maybe use vector instead of array
+                    reportPos++;
+                    if (reportPos >= sizeof(report))
+                        reportPos = 0;
+                    tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, report);
+                    has_keyboard_key = true;
+                    printf("in pressTime, at: %d, with key: %d, targetTime: %d\n", elapsedTime, shortcuts[i].HIDkey, shortcuts[i].pressTime);
+                }else if(elapsedTime >= shortcuts[i].releaseTime){ // if the key has elapsed, find it in the report array and remove it, defragment the array, send empty report
+                    for(uint j = 0; j < sizeof(report); j++){
+                        if(report[j] == shortcuts[i].HIDkey){
+                            report[j] = 0;
+                        }
+                    }
+                    //move all the non zero elements of the array to the right
+                    int count = 0;
+                    for (int i = 0; i < sizeof(report); i++)
+                        if (report[i] != 0)
+                            report[count++] = report[i];
+                    while (count < sizeof(report))
+                        report[count++] = 0;
+
+                    tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, report);
+                    has_keyboard_key = true;
+                    printf("in releaseTime, at: %d, with key: %d, targetTime: %d\n", elapsedTime, shortcuts[i].HIDkey, shortcuts[i].releaseTime);
+                    // if we reach the last release time that means we are done
+                    if(elapsedTime > lastReleaseTime){
+                        startTime = 0;
+                        finished = true;
+                    }
+                }
+            }
+        }else{
+            lastReleaseTime = 0;
+            startedReport = false;
+            if (has_keyboard_key) tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, NULL);
+            if (!btn) has_keyboard_key = false;
+            if (!btn) finished = false;
+            startTime = 0;
+        }
         // start timestamp
         // if the button is pressed proceed
         // use the delta from the current timestamp and the start one to detect how much time has elapsed
