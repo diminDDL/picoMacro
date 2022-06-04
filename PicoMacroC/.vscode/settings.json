@@ -9,7 +9,11 @@
         "clocks.h": "c",
         "bootrom.h": "c",
         "usb_descriptors.h": "c",
-        "wsled.h": "c"
+        "wsled.h": "c",
+        "array": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp",
+        "utility": "cpp"
     },
     "cSpell.words": [
         "bootloader",

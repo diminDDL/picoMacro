@@ -40,13 +40,13 @@ void sendkey1(bool btn){
   }
 }
 Key key2(REPORT_ID_KEYBOARD, 2, 1);
-shortcutBase a = {HID_KEY_A, 0, 100};
-shortcutBase b = {HID_KEY_B, 50, 200};
-shortcutBase c = {HID_KEY_C, 210, 300};
-shortcutBase d = {HID_KEY_D, 310, 400};
-shortcutBase e = {HID_KEY_E, 410, 500};
-shortcutBase f = {HID_KEY_F, 610, 700};
-shortcutBase g = {HID_KEY_A, 710, 800};
+shortcutBase a = {HID_KEY_A, 0, 1};
+shortcutBase b = {HID_KEY_B, 0, 1};
+shortcutBase c = {HID_KEY_C, 0, 1};
+shortcutBase d = {HID_KEY_D, 0, 1};
+shortcutBase e = {HID_KEY_E, 0, 1};
+shortcutBase f = {HID_KEY_F, 0, 1};
+shortcutBase g = {HID_KEY_A, 20, 40};
 int main() {
     stdio_init_all();
     hidInit();
