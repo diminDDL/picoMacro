@@ -71,13 +71,24 @@ class Key{
             uint32_t elapsedTime = (time_us_64() - startTime) / 1000;    // TODO change to uint64_t
             for(uint i = 0; i < shortcuts.size(); i++){
                 if(elapsedTime >= shortcuts[i].pressTime && elapsedTime <= shortcuts[i].releaseTime){
-                    report[reportPos] = shortcuts[i].HIDkey;    // maybe use vector instead of array
-                    reportPos++;
+                    // check if shortcuts[i].HIDkey is already in the report
+                    bool found = false;
+                    for(uint j = 0; j < reportPos; j++){
+                        if(report[j] == shortcuts[i].HIDkey){
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(!found){
+                        report[reportPos] = shortcuts[i].HIDkey;
+                        reportPos++;
+                    }
                     if (reportPos >= sizeof(report))
                         reportPos = 0;
                     tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, report);
                     has_keyboard_key = true;
-                    printf("in pressTime, at: %d, with key: %d, targetTime: %d\n", elapsedTime, shortcuts[i].HIDkey, shortcuts[i].pressTime);
+                    // print the report array
+                    printf("(Press) reporting: %d, %d, %d, %d, %d, %d\n", report[0], report[1], report[2], report[3], report[4], report[5]);
                 }else if(elapsedTime >= shortcuts[i].releaseTime){ // if the key has elapsed, find it in the report array and remove it, defragment the array, send empty report
                     for(uint j = 0; j < sizeof(report); j++){
                         if(report[j] == shortcuts[i].HIDkey){
@@ -94,7 +105,7 @@ class Key{
 
                     tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, report);
                     has_keyboard_key = true;
-                    printf("in releaseTime, at: %d, with key: %d, targetTime: %d\n", elapsedTime, shortcuts[i].HIDkey, shortcuts[i].releaseTime);
+                    printf("(Release) reporting: %d, %d, %d, %d, %d, %d\n", report[0], report[1], report[2], report[3], report[4], report[5]);
                     // if we reach the last release time that means we are done
                     if(elapsedTime > lastReleaseTime){
                         startTime = 0;

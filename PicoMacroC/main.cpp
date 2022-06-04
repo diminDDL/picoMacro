@@ -39,13 +39,13 @@ void sendkey1(bool btn){
   }
 }
 Key key2(REPORT_ID_KEYBOARD, 2, 1);
-shortcutBase q = {HID_KEY_Q, 0, 100};
+shortcutBase q = {HID_KEY_A, 0, 100};
 shortcutBase b = {HID_KEY_B, 110, 200};
 shortcutBase c = {HID_KEY_C, 210, 300};
 shortcutBase d = {HID_KEY_D, 310, 400};
 shortcutBase e = {HID_KEY_E, 410, 500};
 shortcutBase f = {HID_KEY_F, 610, 700};
-shortcutBase g = {HID_KEY_G, 710, 800};
+shortcutBase g = {HID_KEY_A, 710, 800};
 int main() {
     stdio_init_all();
     hidInit();
@@ -83,7 +83,12 @@ int main() {
         gpio_put(PICO_DEFAULT_LED_PIN, isPressedAtPos(report, 1));
         if(board_button_read()){
           printf("rebooting\n");
-          sleep_ms(100);
+          // send zeros to all the pixels
+          sleep_ms(50);
+          for(int i = 0; i < KEYBOARD_SIZE_X * KEYBOARD_SIZE_Y; i++){
+            put_pixel(rgb_u32(0, 0, 0), pio, wsSm);
+          }
+          sleep_ms(50);
           reset_usb_boot(0,0); // allows us to reboot the pico in to the bootloader mode
         }
         //printf(" - %u\n", report);
