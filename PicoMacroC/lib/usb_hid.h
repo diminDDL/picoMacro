@@ -46,14 +46,17 @@ class Key{
     }
     // call this function in a loop with the status of the button as an argument, it should automatically handle the button press and release
     void sendShortcut(bool btn){
+        #define REPORT_DELAY 15
         static uint8_t reportPos = 0;
         static uint8_t report[6] = {0};     // think of how to implement this so that multiple buttons can be pressed at once and it doesn't stall the program
-        static uint32_t startTime = 0;      // TODO change to uint64_t
+        static uint64_t startTime = 0;      // TODO change to uint64_t
         static uint8_t releasedCount = 0;
         static bool has_keyboard_key = false;
         static bool finished = false;
         static bool startedReport = false;
         static uint32_t lastReleaseTime = 0;
+        static uint32_t lastReport = 0;
+        static uint32_t totalReport = 0;
         // start the report
         if(btn && !startedReport){
             startedReport = true;
@@ -82,17 +85,30 @@ class Key{
                     if(!found){
                         report[reportPos] = shortcuts[i].HIDkey;
                         reportPos++;
+                        totalReport++;
                     }
                     if (reportPos >= sizeof(report))
                         reportPos = 0;
-                    tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, report);
-                    has_keyboard_key = true;
-                    // print the report array
-                    printf("(Press) reporting: %d, %d, %d, %d, %d, %d\n", report[0], report[1], report[2], report[3], report[4], report[5]);
+
+                    //if((time_us_64() / 1000) - lastReport > REPORT_DELAY){
+                    if(true){
+                        lastReport = time_us_64() / 1000;
+                        tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, report);
+                        has_keyboard_key = true;
+                        printf("(Press) reporting: %d, %d, %d, %d, %d, %d\n", report[0], report[1], report[2], report[3], report[4], report[5]);
+                        printf("(Press) elapsedTime: %d, pressTime: %d\n", elapsedTime, shortcuts[i].pressTime);
+                    }
+
                 }else if(elapsedTime >= shortcuts[i].releaseTime){ // if the key has elapsed, find it in the report array and remove it, defragment the array, send empty report
                     for(uint j = 0; j < sizeof(report); j++){
+                        bool reset = true;
                         if(report[j] == shortcuts[i].HIDkey){
-                            report[j] = 0;
+                            for(uint k = 0; k < shortcuts.size(); k++){
+                                if(report[j] == shortcuts[k].HIDkey && elapsedTime >= shortcuts[k].pressTime && shortcuts[k].releaseTime >= elapsedTime && shortcuts[k].releaseTime >= shortcuts[i].releaseTime){
+                                    reset = false;
+                                }
+                            }
+                            if(reset) report[j] = 0;
                         }
                     }
                     //move all the non zero elements of the array to the right
@@ -102,14 +118,31 @@ class Key{
                             report[count++] = report[i];
                     while (count < sizeof(report))
                         report[count++] = 0;
+                    
+                    // find when the first zero appears in the array and set out reportPos to that
+                    for(uint j = 0; j < sizeof(report); j++){
+                        if(report[j] == 0){
+                            reportPos = j;
+                            break;
+                        }
+                    }
 
-                    tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, report);
-                    has_keyboard_key = true;
-                    printf("(Release) reporting: %d, %d, %d, %d, %d, %d\n", report[0], report[1], report[2], report[3], report[4], report[5]);
+                    //if((time_us_64() / 1000) - lastReport > REPORT_DELAY){
+                    if(true){
+                        lastReport = time_us_64() / 1000;
+                        tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, report);
+                        has_keyboard_key = true;
+                        printf("{Reles} reporting: %d, %d, %d, %d, %d, %d\n", report[0], report[1], report[2], report[3], report[4], report[5]);
+                        printf("{Reles} elapsedTime: %d, releaseTime: %d\n", elapsedTime, shortcuts[i].releaseTime);
+                    }
+
                     // if we reach the last release time that means we are done
-                    if(elapsedTime > lastReleaseTime){
+                    if(elapsedTime > lastReleaseTime && totalReport >= shortcuts.size()){
                         startTime = 0;
                         finished = true;
+                        lastReport = 0;
+                        totalReport = 0;
+                        reportPos = 0;
                     }
                 }
             }
