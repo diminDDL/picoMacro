@@ -7,7 +7,7 @@
 #include "lib/wsLED.h"
 #include "lib/usb_hid.h"
 #include "lib/kbScan.h"
-
+//TODO remove the printf's
 void printBits(size_t const size, void const * const ptr)
 {
     unsigned char *b = (unsigned char*) ptr;
@@ -40,13 +40,13 @@ void sendkey1(bool btn){
   }
 }
 Key key2(REPORT_ID_KEYBOARD, 2, 1);
-shortcutBase a = {HID_KEY_A, 0, 1};
-shortcutBase b = {HID_KEY_B, 0, 1};
-shortcutBase c = {HID_KEY_C, 0, 1};
-shortcutBase d = {HID_KEY_D, 0, 1};
-shortcutBase e = {HID_KEY_E, 0, 1};
-shortcutBase f = {HID_KEY_F, 0, 1};
-shortcutBase g = {HID_KEY_A, 5, 10};
+shortcutBase a = {HID_KEY_A, 0, 10};
+shortcutBase b = {HID_KEY_B, 0, 10};
+shortcutBase c = {HID_KEY_C, 0, 10};
+shortcutBase d = {HID_KEY_D, 0, 10};
+shortcutBase e = {HID_KEY_E, 0, 10};
+shortcutBase f = {HID_KEY_F, 0, 10};
+shortcutBase g = {HID_KEY_G, 50, 60};
 
 int main() {
     stdio_init_all();
@@ -73,19 +73,21 @@ int main() {
     put_pixel(rgb_u32(0, 50, 100), pio, wsSm);
     sleep_ms(3000);
     printf("Initialising key pulling\n");
-    startKeyPulling(key2, &report, 500);
-    //struct repeating_timer timer;
-    //add_repeating_timer_ms(500, repeating_timer_callback, NULL, &timer);
+
+    //startKeyPulling(key2, &report, 10);
+
     while (true) {
         hidRun();
-        sleep_ms(10);
+        sleep_ms(5);
         report = getKbReport();
         //printBits(sizeof(report), &report);
         // TODO
         // https://github.com/raspberrypi/pico-examples/blob/master/flash/program/flash_program.c
         
         sendkey1(isPressedAtPos(report, 0));
+
         key2.sendShortcut(isPressedAtPos(report, 1));
+
         if(board_button_read()){
           printf("rebooting\n");
           // send zeros to all the pixels

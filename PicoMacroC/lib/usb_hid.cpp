@@ -43,11 +43,13 @@ void hidRun(){
 }
 
 bool LEDstat = false;
+
 bool reportTimerCallback(struct repeating_timer *t){
-  void* reportPtr = t->user_data;
-  uint16_t intReport = *(uint16_t *)reportPtr;
-  printf("inReport %d\n", intReport);
-  printf("Repeat at %lld\n", time_us_64());
+  void* payloadPtr = t->user_data;
+  Key *keyPtr = (Key*)payloadPtr;
+  //printf("inReport %d\n", *(uint16_t *)keyPtr->reportPtr);
+  //printf("Repeat at %lld\n", time_us_64());
+  keyPtr->sendShortcut(isPressedAtPos(*(uint16_t *)keyPtr->reportPtr, 1));
   gpio_put(PICO_DEFAULT_LED_PIN, LEDstat);
   LEDstat = !LEDstat;
   return true;
@@ -56,7 +58,8 @@ bool reportTimerCallback(struct repeating_timer *t){
 void startKeyPulling(Key key, uint16_t *report, uint callIntervalMs){
   uint16_t intReport = *report;
   printf("report: %d, reportAddr: %d, key: %d \n", intReport, report, key.getKeyNum());
-  key.payloadPtr = report;
+  key.reportPtr = report;
+  key.payloadPtr = &key;
   add_repeating_timer_ms(-1 * callIntervalMs, reportTimerCallback, key.payloadPtr, &key.timer);
 }
 

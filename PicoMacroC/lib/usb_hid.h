@@ -22,10 +22,12 @@ struct shortcutBase // structure: {HID_key, pressTime(mS), releaseTime(mS), time
     u_int32_t releaseTime;   // the time the key should be released (ms)
 };
 
+
 class Key{
     public:
     struct repeating_timer timer;
     void* payloadPtr;
+    uint16_t *reportPtr;
     Key(uint type, u_int8_t keyXvalue, u_int8_t keyYvalue) : HIDtype {type}, keyXval {keyXvalue}, keyYval {keyYvalue}
     {
     }
@@ -76,7 +78,7 @@ class Key{
                 startTime = time_us_64();
             uint32_t elapsedTime = (time_us_64() - startTime) / 1000;    // TODO change to uint64_t
             for(uint i = 0; i < shortcuts.size(); i++){
-                printf("(info.) elapsedTime: %d, pressTime: %d, key %d\n", elapsedTime, shortcuts[i].pressTime, shortcuts[i].HIDkey);
+                //printf("(info.) elapsedTime: %d, pressTime: %d, key %d\n", elapsedTime, shortcuts[i].pressTime, shortcuts[i].HIDkey);
                 if(elapsedTime >= shortcuts[i].pressTime && elapsedTime <= shortcuts[i].releaseTime){
                     // check if shortcuts[i].HIDkey is already in the report
                     bool found = false;
@@ -133,11 +135,11 @@ class Key{
             tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, report);
             has_keyboard_key = true;
             lastReportFinished = false;
-            printf("(Press) reporting: %d, %d, %d, %d, %d, %d\n", report[0], report[1], report[2], report[3], report[4], report[5]);
+            //printf("(Press) reporting: %d, %d, %d, %d, %d, %d\n", report[0], report[1], report[2], report[3], report[4], report[5]);
         }else{
             lastReleaseTime = 0;
             startedReport = false;
-            if (has_keyboard_key) tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, NULL);
+            if (has_keyboard_key && lastReportFinished) tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, NULL);
             if (!btn) has_keyboard_key = false;
             if (!btn) finished = false;
             startTime = 0;
