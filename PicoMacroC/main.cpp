@@ -46,7 +46,8 @@ shortcutBase c = {HID_KEY_C, 0, 1};
 shortcutBase d = {HID_KEY_D, 0, 1};
 shortcutBase e = {HID_KEY_E, 0, 1};
 shortcutBase f = {HID_KEY_F, 0, 1};
-shortcutBase g = {HID_KEY_A, 20, 40};
+shortcutBase g = {HID_KEY_A, 5, 10};
+
 int main() {
     stdio_init_all();
     hidInit();
@@ -67,21 +68,24 @@ int main() {
     initKbScan(KEYBOARD_PIN_X_BEGIN, KEYBOARD_PIN_Y_BEGIN, KEYBOARD_SIZE_X, KEYBOARD_SIZE_Y, 100);
     gpio_init(PICO_DEFAULT_LED_PIN);
     gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
+    uint16_t report = 0;
+    put_pixel(rgb_u32(100, 0, 0), pio, wsSm);
+    put_pixel(rgb_u32(0, 50, 100), pio, wsSm);
+    sleep_ms(3000);
+    printf("Initialising key pulling\n");
+    startKeyPulling(key2, &report, 500);
+    //struct repeating_timer timer;
+    //add_repeating_timer_ms(500, repeating_timer_callback, NULL, &timer);
     while (true) {
-        hidRun(false);
+        hidRun();
         sleep_ms(10);
-        uint16_t report = getKbReport();
+        report = getKbReport();
         //printBits(sizeof(report), &report);
         // TODO
         // https://github.com/raspberrypi/pico-examples/blob/master/flash/program/flash_program.c
         
-        // TODO
-        // instead of doing thiss, each function adds to the key report array (6 bytes) and that is sent instead, this will support multiple button presses
-        put_pixel(rgb_u32(100, 0, 0), pio, wsSm);
-        put_pixel(rgb_u32(0, 50, 100), pio, wsSm);
         sendkey1(isPressedAtPos(report, 0));
         key2.sendShortcut(isPressedAtPos(report, 1));
-        gpio_put(PICO_DEFAULT_LED_PIN, isPressedAtPos(report, 1));
         if(board_button_read()){
           printf("rebooting\n");
           // send zeros to all the pixels

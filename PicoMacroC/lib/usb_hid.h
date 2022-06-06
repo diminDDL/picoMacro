@@ -10,6 +10,10 @@
 #include "tusb.h"
 #include "usb_descriptors.h"
 
+#include "lib/kbScan.h"
+
+extern bool lastReportFinished;
+
 // HID button struct
 struct shortcutBase // structure: {HID_key, pressTime(mS), releaseTime(mS), timeMultiplier}
 {
@@ -20,6 +24,8 @@ struct shortcutBase // structure: {HID_key, pressTime(mS), releaseTime(mS), time
 
 class Key{
     public:
+    struct repeating_timer timer;
+    void* payloadPtr;
     Key(uint type, u_int8_t keyXvalue, u_int8_t keyYvalue) : HIDtype {type}, keyXval {keyXvalue}, keyYval {keyYvalue}
     {
     }
@@ -46,7 +52,6 @@ class Key{
     }
     // call this function in a loop with the status of the button as an argument, it should automatically handle the button press and release
     void sendShortcut(bool btn){
-        #define REPORT_DELAY 15
         static uint8_t reportPos = 0;
         static uint8_t report[6] = {0};     // think of how to implement this so that multiple buttons can be pressed at once and it doesn't stall the program
         static uint64_t startTime = 0;      // TODO change to uint64_t
@@ -55,7 +60,6 @@ class Key{
         static bool finished = false;
         static bool startedReport = false;
         static uint32_t lastReleaseTime = 0;
-        static uint32_t lastReport = 0;
         // start the report
         if(btn && !startedReport){
             startedReport = true;
@@ -67,7 +71,7 @@ class Key{
                     lastReleaseTime = shortcuts[i].releaseTime;
             }
         }
-        if(HIDtype == REPORT_ID_KEYBOARD && !finished && startedReport){
+        if(HIDtype == REPORT_ID_KEYBOARD && !finished && startedReport && lastReportFinished){
             if(startTime == 0)
                 startTime = time_us_64();
             uint32_t elapsedTime = (time_us_64() - startTime) / 1000;    // TODO change to uint64_t
@@ -121,14 +125,15 @@ class Key{
                     if(elapsedTime > lastReleaseTime){
                         startTime = 0;
                         finished = true;
-                        lastReport = 0;
                         reportPos = 0;
                     }
                 }
-                tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, report);
-                has_keyboard_key = true;
-                printf("(Press) reporting: %d, %d, %d, %d, %d, %d\n", report[0], report[1], report[2], report[3], report[4], report[5]);
+                
             }
+            tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, report);
+            has_keyboard_key = true;
+            lastReportFinished = false;
+            printf("(Press) reporting: %d, %d, %d, %d, %d, %d\n", report[0], report[1], report[2], report[3], report[4], report[5]);
         }else{
             lastReleaseTime = 0;
             startedReport = false;
@@ -157,12 +162,13 @@ class Key{
     u_int8_t keyXval {};        // the x value of the key on the macropad
     u_int8_t keyYval {};        // the y value of the key on the macropad
     u_int8_t delayMs;           // the delay between the key press and release (ms) except when using the SHORTCUT type
+
 };
 
 
 // different tasks
 void hidInit(void);
-void hidRun(bool wakeup);
+void hidRun(void);
 
 // different callbacks
 void tud_mount_cb(void);
@@ -171,10 +177,14 @@ void tud_suspend_cb(bool remote_wakeup_en);
 void tud_resume_cb(void);
 
 // HID service functions
-static void send_hid_report(uint8_t report_id, uint32_t btn);
-void hid_task(bool wakeup);
+//static void send_hid_report(uint8_t report_id, uint32_t btn);
+//void hid_task(bool wakeup);
 void tud_hid_report_complete_cb(uint8_t instance, uint8_t const* report, uint8_t len);
 uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t* buffer, uint16_t reqlen);
 void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t const* buffer, uint16_t bufsize);
+
+void startKeyPulling(Key key, uint16_t *report, uint callIntervalMs);
+void stopKeyPulling(Key key);
+bool reportTimerCallback(struct repeating_timer *t);
 
 #endif /* USB_HID_H_ */

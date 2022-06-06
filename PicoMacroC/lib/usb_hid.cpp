@@ -1,6 +1,8 @@
 #include "usb_hid.h"
 #include "tusb.h"
 #include "bsp/board.h"
+#include <stdio.h>
+#include "pico/stdlib.h"
 /* 
  * The MIT License (MIT)
  *
@@ -28,15 +30,34 @@
 
 // Status variables
 bool mounted = false;
+bool lastReportFinished = true;
 
 void hidInit(void){
     board_init();
     tusb_init();
 }
 
-void hidRun(bool wakeup){
+void hidRun(){
     tud_task();
     //hid_task(wakeup);
+}
+
+bool LEDstat = false;
+bool reportTimerCallback(struct repeating_timer *t){
+  void* reportPtr = t->user_data;
+  uint16_t intReport = *(uint16_t *)reportPtr;
+  printf("inReport %d\n", intReport);
+  printf("Repeat at %lld\n", time_us_64());
+  gpio_put(PICO_DEFAULT_LED_PIN, LEDstat);
+  LEDstat = !LEDstat;
+  return true;
+}
+
+void startKeyPulling(Key key, uint16_t *report, uint callIntervalMs){
+  uint16_t intReport = *report;
+  printf("report: %d, reportAddr: %d, key: %d \n", intReport, report, key.getKeyNum());
+  key.payloadPtr = report;
+  add_repeating_timer_ms(-1 * callIntervalMs, reportTimerCallback, key.payloadPtr, &key.timer);
 }
 
 //--------------------------------------------------------------------+
@@ -74,10 +95,10 @@ void tud_resume_cb(void)
 // USB HID
 //--------------------------------------------------------------------+
 
-static void send_hid_report(uint8_t report_id, uint32_t btn)
-{
+//static void send_hid_report(uint8_t report_id, uint32_t btn)
+//{
   // skip if hid is not ready yet
-  if ( !tud_hid_ready() ) return;
+  //if ( !tud_hid_ready() ) return;
   //
   
 
@@ -167,32 +188,32 @@ static void send_hid_report(uint8_t report_id, uint32_t btn)
 
   //   default: break;
   // }
-}
+//}
 
 // Every 10ms, we will sent 1 report for each HID profile (keyboard, mouse etc ..)
 // tud_hid_report_complete_cb() is used to send the next report after previous one is complete
-void hid_task(bool wakeup)
-{
-  // Poll every 10ms
-  const uint32_t interval_ms = 10;
-  static uint32_t start_ms = 0;
+// void hid_task(bool wakeup)
+// {
+//   // Poll every 10ms
+//   const uint32_t interval_ms = 10;
+//   static uint32_t start_ms = 0;
 
-  if ( board_millis() - start_ms < interval_ms) return; // not enough time
-  start_ms += interval_ms;
+//   if ( board_millis() - start_ms < interval_ms) return; // not enough time
+//   start_ms += interval_ms;
 
-  // Remote wakeup
-  if ( tud_suspended() && wakeup )
-  {
-    // Wake up host if we are in suspend mode
-    // and REMOTE_WAKEUP feature is enabled by host
-    tud_remote_wakeup();
-  }
-  else
-  {
-    // Send the 1st of report chain, the rest will be sent by tud_hid_report_complete_cb()
-    send_hid_report(REPORT_ID_KEYBOARD, wakeup);
-  }
-}
+//   // Remote wakeup
+//   if ( tud_suspended() && wakeup )
+//   {
+//     // Wake up host if we are in suspend mode
+//     // and REMOTE_WAKEUP feature is enabled by host
+//     tud_remote_wakeup();
+//   }
+//   else
+//   {
+//     // Send the 1st of report chain, the rest will be sent by tud_hid_report_complete_cb()
+//     send_hid_report(REPORT_ID_KEYBOARD, wakeup);
+//   }
+// }
 
 // Invoked when sent REPORT successfully to host
 // Application can use this to send the next report
@@ -201,13 +222,13 @@ void tud_hid_report_complete_cb(uint8_t instance, uint8_t const* report, uint8_t
 {
   (void) instance;
   (void) len;
+  lastReportFinished = true;
+  // uint8_t next_report_id = report[0] + 1;
 
-  uint8_t next_report_id = report[0] + 1;
-
-  if (next_report_id < REPORT_ID_COUNT)
-  {
-    send_hid_report(next_report_id, board_button_read());
-  }
+  // if (next_report_id < REPORT_ID_COUNT)
+  // {
+  //   send_hid_report(next_report_id, board_button_read());
+  // }
 }
 
 // Invoked when received GET_REPORT control request
