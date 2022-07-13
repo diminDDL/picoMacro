@@ -54,7 +54,6 @@ class Key{
     }
     // call this function in a loop with the status of the button as an argument, it should automatically handle the button press and release
     void sendShortcut(bool btn){
-        static uint8_t reportPos = 0;
         static uint8_t report[6] = {0};     // think of how to implement this so that multiple buttons can be pressed at once and it doesn't stall the program
         static uint64_t startTime = 0;      // TODO change to uint64_t
         static uint8_t releasedCount = 0;
@@ -66,34 +65,37 @@ class Key{
         if(btn && !startedReport){
             startedReport = true;
         }
-        // find the last release time, we can leave once we release the last key
-        if(lastReleaseTime == 0){
-            for(uint i = 0; i < shortcuts.size(); i++){
-                if(shortcuts[i].releaseTime > lastReleaseTime)
-                    lastReleaseTime = shortcuts[i].releaseTime;
-            }
-        }
         if(HIDtype == REPORT_ID_KEYBOARD && !finished && startedReport && lastReportFinished){
             if(startTime == 0)
                 startTime = time_us_64();
+            // find the last release time, we can leave once we release the last key
+            if(lastReleaseTime == 0){
+                for(uint i = 0; i < shortcuts.size(); i++){
+                    if(shortcuts[i].releaseTime > lastReleaseTime)
+                        lastReleaseTime = shortcuts[i].releaseTime;
+                }
+            }
             uint32_t elapsedTime = (time_us_64() - startTime) / 1000;    // TODO change to uint64_t
             for(uint i = 0; i < shortcuts.size(); i++){
                 //printf("(info.) elapsedTime: %d, pressTime: %d, key %d\n", elapsedTime, shortcuts[i].pressTime, shortcuts[i].HIDkey);
                 if(elapsedTime >= shortcuts[i].pressTime && elapsedTime <= shortcuts[i].releaseTime){
                     // check if shortcuts[i].HIDkey is already in the report
                     bool found = false;
-                    for(uint j = 0; j < reportPos; j++){
+                    for(uint j = 0; j < sizeof(report[0]); j++){
                         if(report[j] == shortcuts[i].HIDkey){
                             found = true;
                             break;
                         }
                     }
+                    // find the first zero in the array and add the key there
                     if(!found){
-                        report[reportPos] = shortcuts[i].HIDkey;
-                        reportPos++;
+                        for(uint j = 0; j < sizeof(report[0]); j++){    // TODO debug this (not added to report????)
+                            if(report[j] == 0){
+                                report[j] = shortcuts[i].HIDkey;
+                                break;
+                            }
+                        }
                     }
-                    if (reportPos >= sizeof(report))
-                        reportPos = 0;
 
                 }else if(elapsedTime >= shortcuts[i].releaseTime){ // if the key has elapsed, find it in the report array and remove it, defragment the array, send empty report
                     for(uint j = 0; j < sizeof(report); j++){
@@ -114,20 +116,11 @@ class Key{
                             report[count++] = report[i];
                     while (count < sizeof(report))
                         report[count++] = 0;
-                    
-                    // find when the first zero appears in the array and set out reportPos to that
-                    for(uint j = 0; j < sizeof(report); j++){
-                        if(report[j] == 0){
-                            reportPos = j;
-                            break;
-                        }
-                    }
 
                     // if we reach the last release time that means we are done
                     if(elapsedTime > lastReleaseTime){
                         startTime = 0;
                         finished = true;
-                        reportPos = 0;
                     }
                 }
                 

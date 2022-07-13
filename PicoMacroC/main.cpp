@@ -40,13 +40,13 @@ void sendkey1(bool btn){
   }
 }
 Key key2(REPORT_ID_KEYBOARD, 2, 1);
-shortcutBase a = {HID_KEY_A, 0, 10};
-shortcutBase b = {HID_KEY_B, 0, 10};
-shortcutBase c = {HID_KEY_C, 0, 10};
-shortcutBase d = {HID_KEY_D, 0, 10};
-shortcutBase e = {HID_KEY_E, 0, 10};
-shortcutBase f = {HID_KEY_F, 0, 10};
-shortcutBase g = {HID_KEY_G, 50, 60};
+shortcutBase a = {HID_KEY_CONTROL_LEFT, 0, 10};
+shortcutBase b = {HID_KEY_CONTROL_RIGHT, 0, 10};
+shortcutBase c = {HID_KEY_SHIFT_LEFT, 50, 80};
+// shortcutBase d = {HID_KEY_D, 0, 10};
+// shortcutBase e = {HID_KEY_E, 0, 10};
+// shortcutBase f = {HID_KEY_F, 0, 10};
+// shortcutBase g = {HID_KEY_G, 50, 60};
 
 int main() {
     stdio_init_all();
@@ -54,10 +54,10 @@ int main() {
     key2.addKey(a);
     key2.addKey(b);
     key2.addKey(c);
-    key2.addKey(d);
-    key2.addKey(e);
-    key2.addKey(f);
-    key2.addKey(g);
+    // key2.addKey(d);
+    // key2.addKey(e);
+    // key2.addKey(f);
+    // key2.addKey(g);
 
     // Choose PIO instance (0 or 1)
     PIO pio = pio0;

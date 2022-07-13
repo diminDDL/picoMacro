@@ -10,6 +10,8 @@ project(PicoMacro C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
+# set(CMAKE_VERBOSE_MAKEFILE ON)
+
 # Creates a pico-sdk subdirectory in our project for the libraries
 pico_sdk_init()
 
@@ -27,7 +29,7 @@ target_sources(${PROJECT_NAME} PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/lib/usb_descriptors.c
         ${CMAKE_CURRENT_LIST_DIR}/lib/usb_hid.h
         ${CMAKE_CURRENT_LIST_DIR}/lib/usb_hid.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/lib/stdio_usb.c
+        #${CMAKE_CURRENT_LIST_DIR}/lib/stdio_usb.c
         ${CMAKE_CURRENT_LIST_DIR}/lib/kbScan.h
         ${CMAKE_CURRENT_LIST_DIR}/lib/kbScan.cpp
         )
