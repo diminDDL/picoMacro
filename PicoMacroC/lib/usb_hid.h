@@ -17,9 +17,9 @@ extern bool lastReportFinished;
 // HID button struct
 struct shortcutBase // structure: {HID_key, pressTime(mS), releaseTime(mS), timeMultiplier}
 {
-    u_int8_t HIDkey;        // the HID keycode
-    u_int32_t pressTime;     // the time the key should be pressed down (ms)
-    u_int32_t releaseTime;   // the time the key should be released (ms)
+    uint8_t HIDkey;        // the HID keycode
+    uint32_t pressTime;     // the time the key should be pressed down (ms)
+    uint32_t releaseTime;   // the time the key should be released (ms)
 };
 
 
@@ -28,13 +28,13 @@ class Key{
     struct repeating_timer timer;
     void* payloadPtr;
     uint16_t *reportPtr;
-    Key(uint type, u_int8_t keyXvalue, u_int8_t keyYvalue) : HIDtype {type}, keyXval {keyXvalue}, keyYval {keyYvalue}
+    Key(uint type, uint8_t keyXvalue, uint8_t keyYvalue) : HIDtype {type}, keyXval {keyXvalue}, keyYval {keyYvalue}
     {
     }
     uint getType(){
         return HIDtype;
     }
-    u_int8_t getKeyNum(){
+    uint8_t getKeyNum(){
         return keyXval * keyYval;
     }
     void setRGB(uint32_t color){
@@ -153,10 +153,10 @@ class Key{
     std::vector<shortcutBase> shortcuts;
     uint HIDtype {};            // the type of HID device
     uint32_t RGBcode;           // LED color
-    u_int8_t keyNum {};         // the key number on the macropad
-    u_int8_t keyXval {};        // the x value of the key on the macropad
-    u_int8_t keyYval {};        // the y value of the key on the macropad
-    u_int8_t delayMs;           // the delay between the key press and release (ms) except when using the SHORTCUT type
+    uint8_t keyNum {};         // the key number on the macropad
+    uint8_t keyXval {};        // the x value of the key on the macropad
+    uint8_t keyYval {};        // the y value of the key on the macropad
+    uint8_t delayMs;           // the delay between the key press and release (ms) except when using the SHORTCUT type
 
 };
 
